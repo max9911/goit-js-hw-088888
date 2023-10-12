@@ -3,24 +3,22 @@ var throttle = require('lodash.throttle');
 const emailForm = document.querySelector('input[name="email"]');
 const textForm = document.querySelector('textarea[name="message"]');
 const submit = document.querySelector('button');
+const value = {};
 
 if (JSON.parse(localStorage.getItem('feedback-form-state'))) {
   emailForm.value = JSON.parse(
     localStorage.getItem('feedback-form-state')
   ).email;
+  value.email = emailForm.value;
 }
 if (JSON.parse(localStorage.getItem('feedback-form-state'))) {
   textForm.value = JSON.parse(localStorage.getItem('feedback-form-state')).text;
+  value.text = textForm.value;
 }
 
 emailForm.addEventListener('input', throttle(logEmail, 500));
 textForm.addEventListener('input', throttle(logText, 500));
 submit.addEventListener('click', submitF);
-
-const value = {
-  email: '',
-  text: '',
-};
 
 function logEmail(event) {
   value.email = event.target.value;
@@ -35,11 +33,14 @@ function logText(event) {
 
 function submitF(evt) {
   evt.preventDefault();
+  if (emailForm.value && textForm.value) {
+    const object = JSON.parse(localStorage.getItem('feedback-form-state'));
+    console.log(object);
+    emailForm.value = '';
+    textForm.value = '';
 
-  const object = localStorage.getItem('feedback-form-state');
-  console.log(JSON.parse(object));
-  emailForm.value = '';
-  textForm.value = '';
-
-  localStorage.removeItem('feedback-form-state');
+    localStorage.removeItem('feedback-form-state');
+  } else {
+    return alert('!!!!nedd to fill all text areas!!!!');
+  }
 }
